@@ -1,0 +1,6 @@
+{
+    "julia.environmentPath": "${workspaceFolder}",
+    "licenser.author": "Fenyutanchan <fenyutanchan@gmail.com>",
+    "licenser.license": "MIT",
+    "licenser.projectName": "arXiv.jl"
+}
