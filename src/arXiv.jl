@@ -4,26 +4,12 @@ using Dates
 using XML
 using HTTP
 
-export ArXivEntry, get_daily_updates
+export get_daily_updates
 
 const ARXIV_BASE_URL = "http://export.arxiv.org/api/query"
 const ATOM_DATETIME_FORMAT = dateformat"yyyy-mm-ddTHH:MM:SSZ"
 
-"""
-	ArXivEntry
-
-Parsed representation of a single arXiv record from the Atom feed.
-"""
-struct ArXivEntry
-	id::String
-	title::String
-	summary::String
-	published::DateTime
-	updated::DateTime
-	authors::Vector{String}
-	link::String
-	categories::Vector{String}
-end
+include("arXivEntry.jl")
 
 """
 	get_daily_updates(; categories=["cs.LG"], date=Date(now(UTC)), start=0, max_results=200, filter_by_updated=false)
@@ -75,7 +61,7 @@ function _parse_entry(node::XML.Node)
 	published = _parse_datetime(_element_text(node, "published"))
 	updated = _parse_datetime(_element_text(node, "updated"))
 
-	ArXivEntry(
+	arXivEntry(
 		strip(_element_text(node, "id")),
 		_squish(_element_text(node, "title")),
 		_squish(_element_text(node, "summary")),
