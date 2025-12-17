@@ -1,13 +1,14 @@
 module arXiv
 
 using Dates
-using XML
 using HTTP
+using TimeZones
+using XML
 
 export get_daily_updates
 
 const ARXIV_BASE_URL = "http://export.arxiv.org/api/query"
-const ATOM_DATETIME_FORMAT = dateformat"yyyy-mm-ddTHH:MM:SSZ"
+const ATOM_DATETIME_FORMAT = dateformat"yyyy-mm-ddTHH:MM:SS\UTCz"
 
 include("arXivEntry.jl")
 
