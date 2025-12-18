@@ -1,4 +1,4 @@
-# `arXiv.jl`: Access arXiv Preprints
+# `FytcTool_arXiv.jl`: Access arXiv Preprints
 
 It is a tool package for accessing and downloading preprints from the arXiv prerint server (https://arxiv.org/). Now it mainly provides a function to get the latest daily submissions from specified arXiv categories, which returns structured data records.
 
@@ -6,13 +6,13 @@ It is a tool package for accessing and downloading preprints from the arXiv prer
 
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/Fenyutanchan/arXiv.jl.git")
+Pkg.add(url="https://github.com/Fenyutanchan/FytcTool_arXiv.jl.git")
 ```
 
 ## Quick start
 
 ```julia
-using arXiv
+using FytcTool_arXiv
 
 # Pull today's `hep-ph` and `hep-th` submissions, including updates.
 entries = get_daily_updates(categories=["hep-ph", "hep-th"])

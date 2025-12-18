@@ -3,7 +3,7 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-module arXiv
+module FytcTool_arXiv
 
 using Dates
 using HTTP
@@ -19,4 +19,4 @@ include("arXivEntry.jl")
 include("get_daily_updates.jl")
 include("utils.jl")
 
-end # module arXiv
+end # module FytcTool_arXiv
