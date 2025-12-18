@@ -1,23 +1,50 @@
 # `arXiv.jl`: Access arXiv Preprints
 
-It is a tool package for accessing and downloading preprints from the arXiv prerint server (https://arxiv.org/).
+It is a tool package for accessing and downloading preprints from the arXiv prerint server (https://arxiv.org/). Now it mainly provides a function to get the latest daily submissions from specified arXiv categories, which returns structured data records.
 
-## Usage
+## Installation
+
+```julia
+using Pkg
+Pkg.add(url="https://github.com/Fenyutanchan/arXiv.jl.git")
+```
+
+## Quick start
 
 ```julia
 using arXiv
-using Dates
 
-# Fetch today's cs.LG submissions (UTC) sorted by submission time
-entries = get_daily_updates(categories=["cs.LG"], date=Date(now(UTC)), max_results=200)
+# Pull today's `hep-ph` and `hep-th` submissions, including updates.
+entries = get_daily_updates(categories=["hep-ph", "hep-th"])
 
-for e in entries
-	println("[" * string(Date(e.published)) * "] " * e.title)
-	println("Authors: " * join(e.authors, ", "))
-	println("Link: " * e.link)
-	println()
+for e ∈ entries
+    println("[$(e.id)] ", e.title)
+    println("Authors: ", join(e.authors, ", "))
+    println("Link: ", e.link)
+    println("Abstract: ", e.summary)
+    println()
 end
 ```
 
-Pass multiple categories to query combined feeds and set `filter_by_updated=true` if
-you prefer to filter by the `updated` timestamp instead of `published`.
+## API
+
+- `get_daily_updates(; categories=["hep-ph"], max_results_per_call=50, include_updated=true)`
+    - Downloads the category RSS, extracts arXiv IDs, then hydrates them via the API.
+    - Results are sorted by submission time; set `include_updated=false` to drop entries where `updated` differs from `published`.
+
+### Returned type
+
+Each entry is an `arXivEntry` with fields:
+
+- `id` (e.g., "2501.01234v1")
+- `title`
+- `summary`
+- `published` and `updated` (`DateTime`, UTC)
+- `authors` (vector of strings)
+- `link` (abstract page)
+- `categories` (vector of category codes)
+
+## Notes
+
+- The function fetches in batches of `max_results_per_call`; increase if you expect more articles in one request.
+- Networking uses HTTP and XML parsing; you need internet access to run it.

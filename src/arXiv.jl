@@ -9,7 +9,9 @@ using Dates
 using HTTP
 using XML
 
-const ARXIV_BASE_URL = "http://export.arxiv.org/api/query"
+const ARXIV_QUERY_URL = "http://export.arxiv.org/api/query"
+const ARXIV_RSS_URL = "http://export.arxiv.org/rss/"
+const ARXIV_ID_REGEX = r"(?:\d{4}\.\d{4,5}|[a-z-]+(?:\.[A-Z]{2})?/\d{7})(?:v\d+)?"
 const ATOM_DATETIME_FORMAT = dateformat"yyyy-mm-ddTHH:MM:SSZ"
 
 include("arXivEntry.jl")

@@ -3,16 +3,31 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-function __build_query(categories; start::Int, max_results::Int)
-    category_query = join("cat:" .* categories, "+OR+")
+function __build_query(start::Int=0, max_results::Int=50;
+    other_query_params::Dict{String, <:Any}=Dict{String, String}(
+        "search_query" => "cat:hep-ph",
+        "sortBy" => "submittedDate",
+        "sortOrder" => "descending"
+    )
+)
+    all_other_keys = (collect ∘ keys)(other_query_params)
+    if haskey(other_query_params, "start")
+        @warn("Ignoring \"start\" in `other_query_params`")
+        setdiff!(all_other_keys, ["start"])
+    end
+    if haskey(other_query_params, "max_results")
+        @warn("Ignoring \"max_results\" in `other_query_params`")
+        setdiff!(all_other_keys, ["max_results"])
+    end
     params = [
-        "search_query=$(category_query)",
         "start=$(start)",
-        "max_results=$(max_results)",
-        "sortBy=submittedDate",
-        "sortOrder=descending"
+        "max_results=$(max_results)"
     ]
-    return string(ARXIV_BASE_URL, "?", join(params, "&"))
+    append!(params,
+        [string(key, "=", other_query_params[key]) for key ∈ all_other_keys]
+    )
+
+    return string(ARXIV_QUERY_URL, "?", join(params, "&"))
 end
 
 function __fetch_feed(url::String)
@@ -32,9 +47,19 @@ end
 function __parse_entry(node::XML.Node)
     published = __parse_datetime(__element_text(node, "published"))
     updated = __parse_datetime(__element_text(node, "updated"))
+    arXiv_ID = begin
+        id_text = strip(__element_text(node, "id"))
+        m = match(ARXIV_ID_REGEX, id_text)
+        if isnothing(m)
+            @warn "Failed to extract arXiv ID from id field: $id_text"
+            id_text
+        else
+            m.match
+        end
+    end
 
     arXivEntry(
-        strip(__element_text(node, "id")),
+        arXiv_ID,
         __squish(__element_text(node, "title")),
         __squish(__element_text(node, "summary")),
         published,
@@ -105,6 +130,17 @@ end
 
 function __find_elements(node::XML.Node, name::AbstractString)
     return [child for child in XML.children(node) if XML.nodetype(child) == XML.Element && XML.tag(child) == name]
+end
+
+function __find_elements_recursive(node::XML.Node, name::AbstractString)
+    found = XML.Node[]
+    for child ∈ XML.children(node)
+        if XML.nodetype(child) == XML.Element
+            XML.tag(child) == name && push!(found, child)
+            append!(found, __find_elements_recursive(child, name))
+        end
+    end
+    return found
 end
 
 function __first_element(nodes)
