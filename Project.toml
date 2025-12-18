@@ -6,11 +6,9 @@ authors = ["Fenyutanchan <fenyutanchan@gmail.com>"]
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
-TimeZones = "f269a46b-ccf7-5d73-abea-4c690281aa53"
 XML = "72c71f33-b9b6-44de-8c94-c961784809e2"
 
 [compat]
 Dates = "1.11.0"
 HTTP = "1.10.19"
-TimeZones = "1.22.2"
 XML = "0.3.8"

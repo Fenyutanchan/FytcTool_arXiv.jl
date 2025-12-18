@@ -7,11 +7,10 @@ module arXiv
 
 using Dates
 using HTTP
-using TimeZones
 using XML
 
 const ARXIV_BASE_URL = "http://export.arxiv.org/api/query"
-const ATOM_DATETIME_FORMAT = dateformat"yyyy-mm-ddTHH:MM:SS\UTCz"
+const ATOM_DATETIME_FORMAT = dateformat"yyyy-mm-ddTHH:MM:SSZ"
 
 include("arXivEntry.jl")
 
